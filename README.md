@@ -1,6 +1,9 @@
 # balena-radio
 Modified project of `balena-sound` to add internet radio playback when not playing from any other source. After boot `mplayer` is loaded with provided radio from enviroment variable `RADIO_URL`. It`s automatically paused when playing from any other source (airplay/bluetooth/spotify/upnp) and then is automatically resumed.
 
+# Warning
+I am not using multiroom setup, so I could not test it. Even though it should probably work - needs confirmation.
+
 # Required steps
 ```bash
 git clone git@github.com:founek2/balena-radio.git
