@@ -1,22 +1,19 @@
 {
-	"name": "radio",
-	"version": "1.0.0",
-	"description": "Some nodejs scripts to test docker pulseaudio",
-	"main": "main.js",
-	"dependencies": {
-		"@balenalabs/audio-block": "file:./audio-block",
-		"@types/node": "^14.0.14"
-	},
-	"devDependencies": {
-		"ts-node": "^8.10.2",
-		"typescript": "^3.9.7"
-	},
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"author": "Martin Skalický <skalicky.martin@iotplatforma.cloud>",
-	"license": "MIT",
-	"engines": {
-		"node": "12.4.x"
-	}
+    "name": "radio",
+    "version": "1.0.0",
+    "description": "Some nodejs scripts to test docker pulseaudio",
+    "main": "main.js",
+    "dependencies": {
+        "@balenalabs/audio-block": "file:./audio-block",
+        "audio-play": "2.3.1",
+        "audio-loader": "1.0.3"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Martin Skalický <skalicky.martin@iotplatforma.cloud>",
+    "license": "MIT",
+    "engines": {
+        "node": "12.4.x"
+    }
 }

@@ -1,7 +1,7 @@
 FROM balenalib/%%BALENA_MACHINE_NAME%%-node:12.4.0-run
 
 # Install dependencies for pulseaudio2 node package and mplayer
-RUN install_packages python pkg-config make g++ libpulse-dev mplayer
+RUN install_packages python pkg-config make g++ libpulse-dev
 
 RUN mkdir -p /root/.mplayer
 COPY ./mplayer/* /root/.mplayer/
@@ -13,8 +13,6 @@ RUN npm install
 
 # RUN apt purge -y python pkg-config make g++ libpulse-dev
 RUN apt autoremove && apt clean
-
-RUN yarn tsc main.ts
 
 CMD ["node", "main.js"]
 # CMD while : ; do echo "${MESSAGE=Idling...}"; sleep ${INTERVAL=600}; done
