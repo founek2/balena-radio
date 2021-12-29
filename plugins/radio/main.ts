@@ -1,7 +1,5 @@
 import BalenaAudio from '@balenalabs/audio-block';
-
-const play = require('audio-play');
-const load = require('audio-loader');
+import { spawn } from 'child_process';
 
 console.log(`Running PLAY script with the following configuration:`);
 console.log(`PULSE_SERVER: ${process.env.PULSE_SERVER}`);
@@ -24,16 +22,16 @@ async function main() {
     // Listen for play/stop events
     client.on('play', (sink) => {
         // sink.name = "balena-sound-radio.input" || "balena-sound.input"
-        //console.log(sink);
-        if (sink.name === 'balena-sound.input' && !isPaused) {
+        // console.log('PLAY', sink.name);
+        if (sink.name === 'balena-sound.input') {
             console.log('Started playing, pausing radio!');
             pause();
         }
     });
     client.on('stop', (sink) => {
-        //console.log(sink);
+        // console.log('STOP', sink.name);
 
-        if (sink.name === 'balena-sound.input' && isPaused) {
+        if (sink.name === 'balena-sound.input') {
             console.log('Stopped playing, unpausing radio!');
             unpause();
         }
@@ -41,27 +39,50 @@ async function main() {
 
     await client.listen();
 
-    await startMPlayer();
+    startMPlayer();
 }
 
 main();
 
-let playback;
-
+let unpauseTimeout: NodeJS.Timeout;
 function pause() {
+    clearTimeout(unpauseTimeout);
+
+    if (isPaused) return;
     isPaused = !isPaused;
     console.log('PAUSE');
-    if (playback) playback.pause();
+    mplayer.stdin.write('pause\n');
 }
 
 function unpause() {
-    isPaused = !isPaused;
-    console.log('UNPAUSE');
-    if (playback) playback.play();
+    clearTimeout(unpauseTimeout);
+
+    // add timeout 4s, because between songs it stops playing.....
+    unpauseTimeout = setTimeout(() => {
+        if (!isPaused) return;
+        isPaused = !isPaused;
+        console.log('UNPAUSE');
+        mplayer.stdin.write('pause\n');
+    }, 4000);
 }
 
-async function startMPlayer() {
+function startMPlayer() {
     console.log('Starting mplayer...');
-    const audioBuffer = await load('./sample.mp3');
-    play(audioBuffer);
+    mplayer = spawn('mplayer', [
+        '-slave',
+        '-quiet',
+        '-volume',
+        '75',
+        RADIO_URL,
+    ]);
+    mplayer.on('exit', function () {
+        console.log('EXIT.');
+        process.exit(1);
+    });
+    mplayer.stdout.on('data', function (data) {
+        console.log('mplayer stdout: ' + data);
+    });
+    mplayer.stderr.on('data', function (data) {
+        console.log('mplayer stderr: ' + data);
+    });
 }

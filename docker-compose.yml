@@ -11,17 +11,17 @@ services:
     privileged: true
     labels:
       io.balena.features.dbus: 1
+      io.balena.features.supervisor-api: 1
     ports:
       - 4317:4317
-    # volumes:
-    #   - 'pulse:/run/pulse'
 
   sound-supervisor:
-    build: ./core/sound-supervisor
+    build: 
+      context: .
+      dockerfile: ./core/sound-supervisor/Dockerfile.template
     network_mode: host
-    ports:
-      - 3000:3000
     labels:
+      io.balena.features.balena-api: '1'
       io.balena.features.supervisor-api: 1
 
   multiroom-server:
@@ -72,6 +72,7 @@ services:
   radio:
     build: ./plugins/radio
     restart: on-failure
+    privileged: true
     environment: 
       - PULSE_SERVER=tcp:audio:4317
       - PULSE_SINK=balena-sound-radio.input
